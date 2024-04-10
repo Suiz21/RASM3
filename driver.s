@@ -1,4 +1,4 @@
- .global _start
+.global _start
         .equ  BUFFER, 21 // Variable that will be used to allocated space
         .equ MAX_LEN,20 // Creates a restriction on the length of inputs
 
@@ -14,6 +14,8 @@
   szOutLength1:    .asciz "s1.length() = "       // Will output the intro for the output
   szOutLength2:    .asciz "s2.length() = "       // Will output the intro for the output
   szOutLength3:    .asciz "s3.length() = "       // Will output the intro for the output
+  szOutIgnoreCase1:     .asciz "String_equalsIgnoreCase(s1,s3) = " // Output first equals calls
+  szOutIgnoreCase2:     .asciz "String_equalsIgnoreCase(s1,s2) = " // Output first equals calls
   szOutEquals1:     .asciz "String_equals(s1,s3) = " // Output first equals calls
   szOutEquals2:     .asciz "String_equals(s1,s1) = " // Output second equals calls
   szLength:        .skip BUFFER     /// Will output the string length
@@ -115,6 +117,20 @@
  LDR X0,=szS1
  LDR X1,=szS1
  BL  Equals
+
+// ***** IgnoreCase (Case 1) ******/                                                                            NEEDS SP CHANGE
+ LDR X0,=szOutIgnoreCase1
+ BL  putstring
+ LDR X0,=szS1
+ LDR X1,=szS3
+ BL  IgnoreCase
+
+// ***** IgnoreCase (Case 1) ******/                                                                            NEEDS SP CHANGE
+ LDR X0,=szOutIgnoreCase2
+ BL  putstring
+ LDR X0,=szS1
+ LDR X1,=szS2
+ BL  IgnoreCase
 
 
 // Setup the parameters to exit the program
