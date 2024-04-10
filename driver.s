@@ -29,6 +29,7 @@
   szIndexOf1:            .asciz "String_indexOf_1(s2,'g') = "   // Output indexOf_1
   szIndexOf2:            .asciz "String_indexOf_2(s2,'g',9) = " // Output indexOf_2
   szIndexOf3:            .asciz "String_indexOf_3(s2,\"eggs\") = "  // Output indexOf_3
+  szLastIndex1:          .asciz "String_lastIndexOf_1(s2,'g') = "               // Output lastIndexOf_1
   string_eggs:           .asciz "eggs"
   szLength:        .skip BUFFER     /// Will output the string length
   chLF:            .byte 0xa  // (NL line feed, new line)
@@ -152,56 +153,79 @@
  BL  charAt
 
 // ***** #13 output: String_indexOf_1(s2,'g') = 7    ******/
-        LDR     X0,=szIndexOf1                  // Load address of output string
-        BL              putstring                               // Print
+        LDR     X0,=szIndexOf1                          // Load address of output string
+        BL              putstring                                       // Print
 
-        LDR     X0,=szS2                                        // Load s2 into x0
-        MOV     X1,#0x67                                        // Load 'g' into x1
+        LDR     X0,=szS2                                                // Load s2 into x0
+        MOV     X1,#0x67                                                // Load 'g' into x1
 
-        BL              String_indexOf_1                // Call method
+        BL              String_indexOf_1                        // Call method
 
-        LDR     X1,=szBuffer                    // Load address of szBuffer
-        BL              int64asc                                        // Convert int to string
+        LDR     X1,=szBuffer                            // Load address of szBuffer
+        BL              int64asc                                                // Convert int to string
 
-        LDR     X0,=szBuffer                    // Load address of szbuffer
-        BL              putstring                               // Print converted string
-        LDR     X0,=chLF                                        // newline print
+        LDR     X0,=szBuffer                            // Load address of szbuffer
+        BL              putstring                                       // Print converted string
+        LDR     X0,=chLF                                                // newline print
         BL              putch
 
 // ***** #14 output: String_indexOf_2(s2,'g',9) = -1   ******/
-        LDR     X0,=szIndexOf2                  // Load address of output string
-        BL              putstring                               // Print
+        LDR     X0,=szIndexOf2                          // Load address of output string
+        BL              putstring                                       // Print
 
-        LDR     X0,=szS2                                        // Load s2 into x0
-        MOV     X1,#0x67                                        // Load 'g' into x1
-        MOV     X2,#9                                           // Load 9 into x2
+        LDR     X0,=szS2                                                // Load s2 into x0
+        MOV     X1,#0x67                                                // Load 'g' into x1
+        MOV     X2,#9                                                   // Load 9 into x2
 
-        BL              String_indexOf_2                // Call method
+        BL              String_indexOf_2                        // Call method
 
-        LDR     X1,=szBuffer                    // Load address of szBuffer
-        BL              int64asc                                        // Convert int to string
+        LDR     X1,=szBuffer                            // Load address of szBuffer
+        BL              int64asc                                                // Convert int to string
 
-        LDR     X0,=szBuffer                    // Load address of szBuffer
-        BL              putstring                               // Print converted string
-        LDR     X0,=chLF                                        // newline print
+        LDR     X0,=szBuffer                            // Load address of szBuffer
+        BL              putstring                                       // Print converted string
+        LDR     X0,=chLF                                                // newline print
         BL              putch
 
 // ***** #15 output: String_indexOf_3(s2,eggs) = 6   ******/
-        LDR     X0,=szIndexOf3                  // Load address of output string
-        BL              putstring                               // Print
+        LDR     X0,=szIndexOf3                          // Load address of output string
+        BL              putstring                                       // Print
 
-        LDR     X0,=szS2                                        // Load s2 into x0
-        LDR     X1,=string_eggs         // Load szEggs into x1
+        LDR     X0,=szS2                                                // Load s2 into x0
+        LDR     X1,=string_eggs                 // Load szEggs into x1
 
-        BL              String_indexOf_3                // Call method
+        BL              String_indexOf_3                        // Call method
 
-        LDR     X1,=szBuffer                    // Load address of szBuffer
-        BL              int64asc                                        // Convert into to string
+        // Convert int to string
+        LDR     X1,=szBuffer                            // Load address of szBuffer
+        BL              int64asc                                                // Convert into to string
 
-        LDR     X0,=szBuffer                    // Load address of szBuffer
-        BL              putstring                               // Print converted string
-        LDR     X0,=chLF                                        // newline print
+        // Print string
+        LDR     X0,=szBuffer                            // Load address of szBuffer
+        BL              putstring                                       // Print converted string
+        LDR     X0,=chLF                                                // newline print
         BL              putch
+
+// ***** #16 output: String_lastIndexOf_1(s2,'g') = 8   ******/
+        LDR     X0,=szLastIndex1                        // Load address of output string
+        BL              putstring                                       // Print
+
+        LDR     X0,=szS2                                                // Load s2 into x0
+        MOV     X1,#0x67                                                //      Load 'g' into x1
+
+        BL              String_lastIndexOf_1            // Call method
+
+        // Convert int to string
+        LDR     X1,=szBuffer                            // Load address of szBuffer
+        BL              int64asc                                                // Convert into to string
+
+        // Print string
+        LDR     X0,=szBuffer                            // Load address of szBuffer
+        BL              putstring                                       // Print converted string
+        LDR     X0,=chLF                                                // newline print
+        BL              putch
+
+
 
 // Setup the parameters to exit the program
 // and then call Linux to do it.
