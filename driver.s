@@ -1,4 +1,4 @@
-.global _start
+ .global _start
         .equ  BUFFER, 21 // Variable that will be used to allocated space
         .equ MAX_LEN,20 // Creates a restriction on the length of inputs
 
@@ -7,13 +7,15 @@
   szPrompt2:    .asciz "s2 = " // Holds the prompt for value s2
   szPrompt3:    .asciz "s3 = " // Holds the prompt for value s3
   szBuffer:        .skip BUFFER        // Holds the string value we input
-  szS1:            .skip BUFFER          //  Saves our first input
+  szS1:            .asciz "Cat in the hat."          //  Saves our first input
   szS2:            .skip BUFFER          //  Saves our second input
   szS3:            .skip BUFFER          //  Saves our third input
   dbLength:        .skip BUFFER       // Value that will hold the length of the string
   szOutLength1:    .asciz "s1.length() = "       // Will output the intro for the output
   szOutLength2:    .asciz "s2.length() = "       // Will output the intro for the output
   szOutLength3:    .asciz "s3.length() = "       // Will output the intro for the output
+  szOutEquals1:     .asciz "String_equals(s1,s3) = " // Output first equals calls
+  szOutEquals2:     .asciz "String_equals(s1,s1) = " // Output second equals calls
   szLength:        .skip BUFFER     /// Will output the string length
   chLF:            .byte 0xa  // (NL line feed, new line)
 
@@ -99,6 +101,21 @@
  BL   putstring         // Print
  LDR  X0,=chLF          // Load chLF into X0
  BL   putch             // Print
+
+ // ***** Equals (Case 1) ******/                                                                               NEEDS SP CHANGE
+ LDR X0,=szOutEquals1
+ BL  putstring
+ LDR X0,=szS1
+ LDR X1,=szS3
+ BL  Equals
+
+// ***** Equals (Case 2) ******/                                                                                NEEDS SP CHANGE
+ LDR X0,=szOutEquals2
+ BL  putstring
+ LDR X0,=szS1
+ LDR X1,=szS1
+ BL  Equals
+
 
 // Setup the parameters to exit the program
 // and then call Linux to do it.
