@@ -4,60 +4,58 @@
 // If both always have equal bytes (cspr is 0), return true
 // Else, return false.
 
- .global Equals
+  .global Equals
           .equ BUFFER, 21                               // Variable that will be used to allocate space
           .equ MAX_LEN,20                               // Creates a restriction on the length of inputs
 
   .data
-    strByte1:    .byte 0x0    
-    strByte2:    .byte 0x0    
-    chLF:        .byte 0xa                                    // (NL line feed, new line)
+    EqualStr:       .asciz "True" 
+    NotEqualStr:    .asciz "False" 
+    chLF:           .byte 0xa                                    // (NL line feed, new line)
 
   .text
   Equals:
-
-inputX_prompt:
-
-  LDRB W7,[X7]
-  LDRB W0,[X0]                                           // Selects an individual byte of strBuffer 
- 
-  LDR X1,=strByte1
-  STRB W0,[X1]
-
-  LDR X0,=strByte1
-  BL  putch
-
-  LDR X0,=chLF
-  BL  putch
-
-
-  LDR X0,=strByte2
-  STRB W7,[X0]
-
-  LDR X0,=strByte2
-  BL  putch
-
-  LDR X0,=chLF
-  BL  putch
-
-/*
-  inputX_checkloop:
-  CMP X0,0X00                                            // Compares the next byte to 0
-  BEQ inputX_continue                                    // If it is equal to 0, this means the input has ended, and we can now continue
-  CMP x0,0x2D                                            // Checks to see if the byte value is below 2D (ascii -)
-  BLT  inputX_invalid                                    // If so, this is out of range, jump to invalid input
-  CMP X0,0X39                                            // Checks to see if the byte value is aboe 39 (ascii 9) 
-  BGT inputX_invalid                                     // If so, this is out of range, jump to invalid input
-  ADD W1,W1,#1                                           // Increments to next byte in the buffer
-  LDR W0,=strBuffer                                      // Loads buffer back into W0 
-  ADD W0,W0,W1                                           // Places whatever in W1, the increment into W0
-  LDRB W0,[X0]                                           // Loads the next byte, the loop is now ready to be repeated
-  B    inputX_checkloop                                  // Repeat the loop
-*/
   
- /****** EXIT SEQUENCE ****/
-  MOV  X0,#0   // Use 0 return code
-  MOV  X8, #93  //Service code 93 terminates
-  SVC  0   // Call Linux to terminate
+  STR X30,[SP, # -16]!
+  STR X0,[SP,#-16]!
+  STR X1,[SP,#-16]!
+ 
+  loop:
+  LDRB w2,[x0]
+  LDRB w3,[x1]
+
+  CMP W2,0x00
+  BEQ equal
+
+  CMP W2, W3
+  BNE not_equal
+
+  ADD  X0, X0,#1
+  ADD  X1, X1,#1
+
+
+  B loop
+
+  equal:
+  LDR X0,=EqualStr
+  BL  putstring
+  LDR X0,=chLF
+  BL  putch
+  B   done 
+
+  not_equal:
+  LDR X0,=NotEqualStr
+  BL  putstring
+  LDR X0,=chLF
+  BL  putch
+  B   done
+
+ done:
+ LDR X1,[SP], #16
+ LDR X0,[SP], #16
+ LDR X30,[SP], #16
+
+ RET LR
+
 
 .end
