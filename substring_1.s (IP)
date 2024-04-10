@@ -1,4 +1,4 @@
-// Acting like substring 2
+// Prints one byte too many
 
  .global substring_1
           .equ BUFFER, 21                               // Variable that will be used to allocate space
