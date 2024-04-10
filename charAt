@@ -22,7 +22,7 @@ reachposition:
     LDRB    W3, [X2]         // Load byte into w3
 
     // Check if we've reached the 4th position
-    CMP     W1, #4           // Compare with the 4th position (0-based index)
+    CMP     W1, W4           // Compare with the 4th position (0-based index)
     BEQ    found_position   // If equal, jump to found_position
 
     // Increment the position counter
