@@ -1,0 +1,44 @@
+// Find a way to implement the actual position via a loop
+
+ .global charAt
+          .equ BUFFER, 21                               // Variable that will be used to allocate space
+          .equ MAX_LEN,20                               // Creates a restriction on the length of inputs
+
+  .data
+  position: .word 4
+  Char:     .byte 0x00
+  chLF:     .byte 0x0a
+
+  .text
+  charAt:
+  
+  STR X30,[SP, # -16]!
+  STR X0,[SP,#-16]!
+  STR X1,[SP,#-16]!
+ 
+ LDR X1,=position
+ LDRB W1,[X1]
+
+ // Calculate the memory address of the character at position 4
+    ADD     W0, W0, W1   // Add the position offset to the string address
+
+    // Load the character value from memory
+    LDRB    W2, [X0]     // Load byte into w2 
+
+ LDR X0,=Char
+ STRB W2,[X0]
+
+ LDR X0,=Char
+ BL  putch
+
+ LDR X0,=chLF
+ BL  putch
+
+ LDR X1,[SP], #16
+ LDR X0,[SP], #16
+ LDR X30,[SP], #16
+
+ RET LR
+
+
+.end
