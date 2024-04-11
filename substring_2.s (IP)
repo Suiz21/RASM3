@@ -1,4 +1,4 @@
-.global substring_1
+.global substring_2
           .equ BUFFER, 21                               // Variable that will be used to allocate space
           .equ MAX_LEN,20                               // Creates a restriction on the length of inputs
 
@@ -7,7 +7,7 @@
   chLF:     .byte 0x0a
 
   .text
-  substring_1:
+  substring_2:
   
   STR X30,[SP, # -16]!
 
