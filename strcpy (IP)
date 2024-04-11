@@ -1,54 +1,47 @@
  .global copy
 
-        .data
- 
-        copiedStr: .skip 21
-        strCopy:   .skip 21
-        ptrString: .quad 0
-        chLF:   .byte 0x0a
+    .data
+
+ptrString:        .quad 0
+
+    .text
+
+// Subroutine String_copy
+// X0: Must point to a null terminated string
+// LR: Must contain the return address
+// All AAPCS required registers are preserved
+//        x0... are modified and not preserved
 
 
-        .text
-  copy:
+copy:
 
-     LDR X19,=copiedStr
-     STR X0,[X19]
+    MOV    X7,X0                    // Set x7 = x0, contains pointer to string being copied
+    BL     String_length
 
-     STR X19,[SP,#-16]!
+    MOV    X4,X0
 
-     // Determining how much heap memory to request from the Kernel
-     LDR  X0,=copiedStr                // Loads copiedStr
-     BL   String_length          // Returns string length
+    STR    X7,[SP,#-16]!        // String to copy
+    STR    X4,[SP,#-16]!        // Length of string
+    STR    X30,[SP,#-16]!
+
+    MOV    X0,X2                    // Set x0 = x2, length of string
+    BL      malloc                // Allocate enough bytes for length of string
+
+    LDR    X1,=ptrString
+    STR    X0,[X1]
+
+    LDR    X30,[SP],#16
+    LDR    X4,[SP],#16
+    LDR    X7,[SP],#16
+
+loop2_copy:
+
+   LDRB    W7,[X1]
+   STRB       
 
 
-     // Ask the kernel to give me the # of bytes stored in X0
-     BL    malloc  // all registers are wrecked, except X0
-                   // which contains the starting address of 
-                   // our block of heap data.
-    
-    // Save the newly malloc'd memory to our pointer
-    LDR X19,[SP], #16
-/*
-    MOV     W1, 0            // Initialize position counter
+    RET    LR
 
-    StringCopy:
-/*
-    ADD   W2, W0, W1   // Add the position offset to the string address
-    LDRB  W3,[X19]           // Loads a single byte, then increments
-    STRB W19,[X4]            // Stores byte, then increments like LDRB
-    CMP  W2,W20        // Checks for a null character
-    BEQ  EndStringCopy         // If Completed, jump
-   
-    // Increment the position counter
-    ADD     W1, W1, #1
-    B StringCopy               // Loops
-
-   EndStringCopy:
-  // print newString
- //  LDR   X1,=strCopy          // Loads StrCopy
-//   LDR   X0,[X1]              // Derefences into X0
-*/
-   RET LR
-
+    .end
  
  .end
