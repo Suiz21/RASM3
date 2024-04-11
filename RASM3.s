@@ -32,8 +32,12 @@
   szLastIndex1:          .asciz "String_lastIndexOf_1(s2,'g') = "               // Output lastIndexOf_1
   szLastIndex2:  .asciz "String_lastIndexOf_2(s2,'g',6) = "     // Output lastIndexOf_2
   szLastIndex3:  .asciz "String_lastIndexOf_3(s2,\"egg\") = "   // Output lastIndexOf_3
-  szConcat:                      .asciz "String_concat(s1,s2) = "                                       // Output concat
+  szConcat1:             .asciz "String_concat(s1, \" \");"                                     // Output concat
+  szConcat2:             .asciz "String_concat(s1, s2) = "
   szReplace:             .asciz "String_replace(s1,'a','o') = "                                                                   // Output replace
+  szToLower:        .asciz "String_toLowerCase(s1) = "                                          // Output toLower
+  szToUpper:             .asciz "String_toUpperCase(s1) = "                                             // Output toUpper
+  string_space:  .asciz " "
   string_eggs:           .asciz "eggs"
   szLength:        .skip BUFFER     /// Will output the string length
   chLF:            .byte 0xa  // (NL line feed, new line)
@@ -276,29 +280,87 @@
         MOV     X1,#0x61                                                // Load 'a' into x1
         MOV     X2,#0x6F                                                // Load 'o' into x2
 
-        BL              String_replace                          // replace the a's w o's
+        BL              String_replace                          // replace the a's w/ o's
 
+        // Pushing onto stack
+        STR     X30,[SP,#-16]!
+        STR     X0,[SP,#-16]!
+
+        // Print
         BL              putstring
+        LDR     X0,=chLF                                                // New line
+        BL              putch
 
-        LDR     X0,=chLF
+// ***** 20. String_toLowerCase(s1) = "cot in the hot."   ******/
+
+        LDR     X0,=szToLower                           // Load address of output str
+        BL              putstring                                       // Print
+
+        // Pop the stack
+        LDR     X0,[SP],#16
+
+        BL              String_toLowerCase              // Convert chars to lower case
+
+        // Pushing onto stack
+        STR     X0,[SP,#-16]!
+
+        // Print
+        BL              putstring
+        LDR     X0,=chLF                                                // new line print
+        BL              putch
+
+// ***** 21. String_toUpperCase(s1) = "COT IN THE HOT."   ******/
+        LDR     X0,=szToUpper                           // Load address of output str
+        BL              putstring                                       // Print
+
+        // Pop the stack
+        LDR     X0,[SP],#16
+
+        BL              String_toUpperCase              // Convert chars to upper case
+
+        // Push x0 onto the stack
+        STR     X0,[SP,#-16]!
+
+        // Print
+        BL              putstring
+        LDR     X0,=chLF                                                // new line print
         BL              putch
 
 
 // ***** #22 output: String_concat(s1,s2) = "Cat in the hat.Green eggs and ham."   ******/
-        LDR     X0,=szConcat                            // Load address of output str
+        LDR     X0,=szConcat1                           // Load address of output str
         BL              putstring                                       // Print
 
-        LDR     X0,=szS1                                                // Load address of szS1 into x0
-        LDR     X1,=szS2                                                // Load address of szS2 into x1
-
-        BL              String_concat
-
-        BL              putstring
-
-        LDR     X0,=chLF
+        LDR     X0,=chLF                                                // new line print
         BL              putch
 
+        // Pop x0 off stack
+        LDR     X0,[SP],#16
 
+        LDR     X1,=string_space                        // Load " " of szS2 into x1
+
+        BL              String_concat                           // Call concat method
+
+        LDR     X1,=szS2                                                // Load "Green eggs and ham."
+
+        BL              String_concat                           // Call concat method
+
+        // Push x0 onto stack
+        STR     X0,[SP,#-16]!
+
+        LDR     X0,=szConcat2                           // Load address of output str
+        BL              putstring                                       // Print
+
+        // Pop x0 off stack
+        LDR     X0,[SP],#16
+
+        // Print
+        BL              putstring
+        LDR     X0,=chLF                                                // new line print
+        BL              putch
+
+        // Pop x30 off stack
+        LDR     X30,[SP],#16
 
 // Setup the parameters to exit the program
 // and then call Linux to do it.
