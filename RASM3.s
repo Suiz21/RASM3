@@ -50,6 +50,8 @@
   szToUpper:             .asciz "String_toUpperCase(s1) = "                                             // Output toUpper
   string_space:  .asciz " "
   string_eggs:           .asciz "eggs"
+  string_true:           .asciz "TRUE"
+  string_false:  .asciz "FALSE"
   szLength:        .skip BUFFER     /// Will output the string length
   chLF:            .byte 0xa  // (NL line feed, new line)
 
@@ -228,6 +230,25 @@
   LDR X0,=szS1
   LDR X1,=szEnd
   BL  endsWith
+
+  CMP X0,#0
+  BEQ false
+
+  // Print true
+  LDR   X0,=string_true
+  BL    putstring
+  LDR   X0,=chLF
+  BL    putch
+
+  B     jump_over
+
+  false:
+  LDR X0,=string_false
+  BL    putstring
+  LDR X0,=chLF
+  BL    putch
+
+jump_over:
 
 // ***** #13 output: String_indexOf_1(s2,'g') = 7    ******/
         LDR     X0,=szIndexOf1                          // Load address of output string
