@@ -163,6 +163,27 @@
  LDR X1,=szS2
  BL  IgnoreCase
 
+// ***** strCopy *****/
+  LDR   X0,=szCopy
+  BL    putstring
+  LDR X0,=szOutCopy
+  BL  putstring
+  LDR X0,=chLF
+  BL  putch
+  LDR X0,=szCopied
+  BL  putstring
+  LDR X0,=szS1
+  BL  putstring
+  LDR   X0,=chLF
+  BL    putch
+  LDR X0,=szCopy
+  BL    putstring
+  LDR X0,=szS1
+  BL  copy
+  BL  putstring
+  LDR X0,=chLF
+  BL  putch
+
 // ***** charAt    ******/                                                                              NEEDS SP CHANGE
  LDR X0,=szCharAt
  BL  putstring
@@ -171,12 +192,12 @@
  BL  charAt
 
 // **** substring_1 ****/
-/*  LDR X0,=szOutSub1
+  LDR X0,=szOutSub1
   BL  putstring
   MOV W4,#4
   MOV W5,#14
   LDR X0,=szS3
-  BL  substring_1*/
+  BL  substring_1
 
   // **** substring_2 ****/
   LDR X0,=szOutSub2
