@@ -1,57 +1,85 @@
+/* Programmer: Aidan Ramirez
+ * endsWith (RASM_3)
+ * Purpose: Determines whether a string ends with a substring
+ * Author: Aidan Ramirez
+ * Date last modified: 11 April 2024
+ */
+
+// Contract for endsWith:
+        // Subroutine length: Provided a pointer to a null terminated string, endsWith will 
+        //      return the bool regading ending substring
+        // X0: Must point to a null terminated string
+        // LR: Must contain the return address
+        // All AAPCS required registers are preserved,  r19-r29 and SP.
+
+
 .global endsWith
+        .text
+endsWith:
+    // Assume x0 points to string1, x1 points to suffix
+    // First, calculate lengths of string1 and suffix
+    // Let's assume x2 will hold the length of string1, x3 for suffix
 
-  .data
-    EqualStr:       .asciz "True" 
-    NotEqualStr:    .asciz "False" 
-    chLF:           .byte 0xa                                    // (NL line feed, new line)
+    // Calculate length of string1, result in x2
 
-  .text
-  endsWith:
+         // Push x30, x0 and x1 onto stack
+         STR    X30,[SP,#-16]!                          // push registers
+         STR    X0,[SP,#-16]!
+         STR X1,[SP,#-16]!
 
- STP X29, X30,[SP, #-16]!  // Save registers
- ADD X0,X0,#14
-    // Calculate the length of the suffix string
+         BL     String_length                                   // Calculate string1 length
 
-    mov x4, x1          // Copy the pointer to suffix to x4
-    mov x5, #0          // Initialize a counter for length calculation
+    MOV X2,X0                                                           // Length in x2
 
-calculate_length:
-    ldrb w6, [x4], #1  // Load byte from suffix and increment pointer
-    cmp w6, #0         // Check for null terminator
-    beq length_calculated  // Exit loop if null terminator is found
-    add x5, x5, #1     // Increment counter for each byte
-    b calculate_length // Continue loop
+         // Pop x1 off stack
+         LDR    X1,[SP],#16     // pop register
 
-length_calculated:
-    // Subtract the length of the suffix from the pointer to move back to the appropriate position
-    sub x3, x0, x5      // Move back by the length of the suffix
+         MOV    X0,X1           // copy register
 
-    // Compare strings forwards byte by byte
-compare_loop:
-    ldrb w4, [x0], #1  // Load byte from s1 and increment pointer
-    ldrb w5, [x3], #1  // Load byte from suffix and increment pointer
-    cmp w4, w5         // Compare characters
-    bne not_found     // If they don't match, return false
-    cbz w5, found      // If suffix has been fully compared, it matches, return true
-    b compare_loop     // Otherwise, continue comparing
+         // Push x1 onto stack
+         STR    X1,[SP,#-16]!   // push registers
+         // Push x2 onto stack
+         STR    X2,[SP,#-16]!
 
-found:
-    // Set return value to true
-    LDR X0,=EqualStr
-  BL  putstring
-  LDR X0,=chLF
-  BL  putch
-  B end_function
+    // Calculate length of suffix, result in x3
 
-not_found:
-    // Set return value to false
-   LDR X0,=NotEqualStr
-  BL  putstring
-  LDR X0,=chLF
-  BL  putch
+         BL     String_length               // Calc str1 length
 
-end_function:
-    // Restore registers and return
-    ldp x29, x30, [sp], #16
-    ret
-    b end_function
+         MOV    X3,X0           // copy registers
+
+         LDR    X2,[SP],#16     // pop registers
+         LDR    X1,[SP],#16
+         LDR    X0,[SP],#16
+         LDR    X30,[SP],#16
+
+    // Compare lengths: if suffix is longer, return false
+    CMP x3, x2          // compare
+    BHI .return_false // Branch if suffix length > string1 length
+
+    // Set pointers to the end of each string
+    // Compare characters from the end
+.loop_compare:
+    // Correctly adjust the pointers before loading characters
+    SUB x2, x2, #1 // Move backwards in string1
+    SUB x3, x3, #1 // Move backwards in suffix
+
+    // Calculate actual addresses for the current characters
+    ADD x4, x0, x2 // Address of the current character in string1
+    ADD x5, x1, x3 // Address of the current character in suffix
+
+    // Load the characters from these addresses
+    LDRB w4, [x4] // Load byte from string1
+    LDRB w5, [x5] // Load byte from suffix
+
+    CMP w4, w5          // compare
+    BNE .return_false // Branch if not equal
+    CMP x3, #0         // compare
+    BGT .loop_compare // Continue if not at the start of suffix
+
+    // If we reached here, all characters matched
+    MOV x0, #1 // True
+    RET
+
+.return_false:
+    MOV x0, #0 // False
+    RET
