@@ -9,8 +9,9 @@
   endsWith:
 
  STP X29, X30,[SP, #-16]!  // Save registers
- 
+ ADD X0,X0,#14
     // Calculate the length of the suffix string
+
     mov x4, x1          // Copy the pointer to suffix to x4
     mov x5, #0          // Initialize a counter for length calculation
 
