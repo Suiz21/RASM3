@@ -32,6 +32,8 @@
   szLastIndex1:          .asciz "String_lastIndexOf_1(s2,'g') = "               // Output lastIndexOf_1
   szLastIndex2:  .asciz "String_lastIndexOf_2(s2,'g',6) = "     // Output lastIndexOf_2
   szLastIndex3:  .asciz "String_lastIndexOf_3(s2,\"egg\") = "   // Output lastIndexOf_3
+  szConcat:                      .asciz "String_concat(s1,s2) = "                                       // Output concat
+  szReplace:             .asciz "String_replace(s1,'a','o') = "                                                                   // Output replace
   string_eggs:           .asciz "eggs"
   szLength:        .skip BUFFER     /// Will output the string length
   chLF:            .byte 0xa  // (NL line feed, new line)
@@ -266,13 +268,43 @@
         LDR     X0,=chLF                                                // newline print
         BL              putch
 
+// ***** #19 output: String_replace(s1,'a','o') = "Cot in the hot."   ******/
+        LDR     X0,=szReplace                           // Load address of output string
+        BL              putstring                                       // Print
+
+        LDR     X0,=szS1                                                // Load s1 into x0
+        MOV     X1,#0x61                                                // Load 'a' into x1
+        MOV     X2,#0x6F                                                // Load 'o' into x2
+
+        BL              String_replace                          // replace the a's w o's
+
+        BL              putstring
+
+        LDR     X0,=chLF
+        BL              putch
+
+
+// ***** #22 output: String_concat(s1,s2) = "Cat in the hat.Green eggs and ham."   ******/
+        LDR     X0,=szConcat                            // Load address of output str
+        BL              putstring                                       // Print
+
+        LDR     X0,=szS1                                                // Load address of szS1 into x0
+        LDR     X1,=szS2                                                // Load address of szS2 into x1
+
+        BL              String_concat
+
+        BL              putstring
+
+        LDR     X0,=chLF
+        BL              putch
+
 
 
 // Setup the parameters to exit the program
 // and then call Linux to do it.
-   mov X0,#0  // Use 0 return code
-   mov X8,#93 //Service code 93 terminates
-   svc 0  // Call Linux to terminate
+   mov X0,#0                                            // Use 0 return code
+   mov X8,#93                                           // Service code 93 terminates
+   svc 0                                                        // Call Linux to terminate
 
 
 
