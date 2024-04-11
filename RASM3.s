@@ -17,6 +17,9 @@
   szS1:            .asciz "Cat in the hat."          //  Saves our first input
   szS2:            .skip BUFFER          //  Saves our second input
   szS3:            .skip BUFFER          //  Saves our third input
+  szStar1:         .asciz "hat."
+  szStar2:         .asciz "Cat"
+  szEnd:           .asciz "in the hat."
   dbLength:        .skip BUFFER       // Value that will hold the length of the string
   szOutLength1:    .asciz "s1.length() = "       // Will output the intro for the output
   szOutLength2:    .asciz "s2.length() = "       // Will output the intro for the output
@@ -25,7 +28,14 @@
   szOutIgnoreCase2:     .asciz "String_equalsIgnoreCase(s1,s2) = " // Output second ignore case calls
   szOutEquals1:     .asciz "String_equals(s1,s3) = " // Output first equals calls
   szOutEquals2:     .asciz "String_equals(s1,s1) = " // Output second equals calls
+  szOutSub1:       .asciz  "String_substring_1(s3,4,14) = " // Output substring1
+  szOutSub2:       .asciz  "String_substring_2(s3,7) = "    // Output substring2
+  szOutCopy:       .asciz  "String_copy(s1)"        // Output execution of copy
+  szCopied:        .asciz  "s1 = "                  // Outputs s1
+  szCopy:          .asciz  "s4 = "                  // Outputs s4
   szCharAt:        .asciz "String_charAt(s2,4) =  " // Output second equals calls
+  szOutStart1:     .asciz "String_startsWith_1(s1,11, hat) = "
+  szOutStart2:     .asciz "String_startsWith_2(s1, Cat) = " // Outputs second start call
   szIndexOf1:            .asciz "String_indexOf_1(s2,'g') = "   // Output indexOf_1
   szIndexOf2:            .asciz "String_indexOf_2(s2,'g',9) = " // Output indexOf_2
   szIndexOf3:            .asciz "String_indexOf_3(s2,\"eggs\") = "  // Output indexOf_3
@@ -159,6 +169,41 @@
  MOV W4,#4
  LDR X0,=szS2
  BL  charAt
+
+// **** substring_1 ****/
+/*  LDR X0,=szOutSub1
+  BL  putstring
+  MOV W4,#4
+  MOV W5,#14
+  LDR X0,=szS3
+  BL  substring_1*/
+
+  // **** substring_2 ****/
+  LDR X0,=szOutSub2
+  BL  putstring
+  MOV W4,#7
+  LDR X0,=szS3
+  BL  substring_2
+
+  // **** startsWith_1 **** //
+  LDR X0,=szOutStart1
+  BL  putstring
+  MOV X4,#11
+  LDR X0,=szS1
+  LDR X1,=szStar1
+  BL  startsWith_1
+
+  // **** startsWith_2 **** //
+  LDR X0,=szOutStart2
+  BL  putstring
+  LDR X0,=szS1
+  LDR X1,=szStar2
+  BL  startsWith_2
+
+  // **** endsWith **** //
+  /*LDR X0,=szS1
+  LDR X1,=szEnd
+  BL  endsWith*/
 
 // ***** #13 output: String_indexOf_1(s2,'g') = 7    ******/
         LDR     X0,=szIndexOf1                          // Load address of output string
