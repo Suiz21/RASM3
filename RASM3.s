@@ -36,6 +36,7 @@
   szCharAt:        .asciz "String_charAt(s2,4) =  " // Output second equals calls
   szOutStart1:     .asciz "String_startsWith_1(s1,11, hat) = "
   szOutStart2:     .asciz "String_startsWith_2(s1, Cat) = " // Outputs second start call
+  szOutEnd:                      .asciz "String_endsWith(s1,\"in the hat.\") = " // Outputs endswith
   szIndexOf1:            .asciz "String_indexOf_1(s2,'g') = "   // Output indexOf_1
   szIndexOf2:            .asciz "String_indexOf_2(s2,'g',9) = " // Output indexOf_2
   szIndexOf3:            .asciz "String_indexOf_3(s2,\"eggs\") = "  // Output indexOf_3
@@ -222,9 +223,11 @@
   BL  startsWith_2
 
   // **** endsWith **** //
-  /*LDR X0,=szS1
+  LDR   X0,=szOutEnd
+  BL    putstring
+  LDR X0,=szS1
   LDR X1,=szEnd
-  BL  endsWith*/
+  BL  endsWith
 
 // ***** #13 output: String_indexOf_1(s2,'g') = 7    ******/
         LDR     X0,=szIndexOf1                          // Load address of output string
